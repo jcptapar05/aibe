@@ -1,0 +1,140 @@
+// Prisma Schema for Movie Room Application
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  watchSessions WatchSession[]
+  roomsHosted   Room[]         @relation("RoomHost")
+  roomParticipations RoomParticipation[]
+  messages      Message[]
+  reactions     Reaction[]
+  gifts         Gift[]
+}
+
+model Movie {
+  id          Int      @id @default(autoincrement())
+  tmdbId      Int      @unique
+  title       String
+  overview    String?  @db.Text
+  posterPath  String?
+  rating      Float?
+  trailerKey  String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  watchSessions WatchSession[]
+}
+
+model Room {
+  id          Int      @id @default(autoincrement())
+  roomId      String   @unique
+  password    String
+  hostId      Int
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  closedAt    DateTime?
+
+  // Relations
+  host        User     @relation("RoomHost", fields: [hostId], references: [id])
+  participants RoomParticipation[]
+  messages    Message[]
+  reactions   Reaction[]
+  gifts       Gift[]
+  watchSessions WatchSession[]
+
+  @@index([hostId])
+}
+
+model RoomParticipation {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  userId    Int
+  joinedAt  DateTime @default(now())
+  leftAt    DateTime?
+
+  // Relations
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+model WatchSession {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  movieId     Int
+  roomId      Int?
+  watchMode   String   // 'alone' or 'room'
+  duration    Int      // in seconds
+  startedAt   DateTime @default(now())
+  endedAt     DateTime?
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  movie       Movie    @relation(fields: [movieId], references: [id])
+  room        Room?    @relation(fields: [roomId], references: [id])
+
+  @@index([userId])
+  @@index([movieId])
+  @@index([roomId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  userId    Int
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  // Relations
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+model Reaction {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  userId    Int
+  emoji     String
+  createdAt DateTime @default(now())
+
+  // Relations
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+}
+
+model Gift {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  userId    Int
+  giftType  String   // '🎁', '⭐', '💎'
+  createdAt DateTime @default(now())
+
+  // Relations
+  room      Room     @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([roomId])
+  @@index([userId])
+}

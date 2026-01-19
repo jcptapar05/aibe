@@ -1,0 +1,29 @@
+{
+  "name": "movie-room-server",
+  "version": "1.0.0",
+  "description": "Movie Room Backend - Watch Together with Analytics",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.0",
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "axios": "^1.7.9",
+    "express-validator": "^7.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "prisma": "^6.2.0"
+  }
+}
