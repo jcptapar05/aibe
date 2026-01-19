@@ -29,12 +29,21 @@ const io = new Server(httpServer, {
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin:
+      process.env.CLIENT_URL ||
+      "http://localhost:3000" ||
+      "https://aife-liart.vercel.app/" ||
+      "https://aibe-production.up.railway.app/" ||
+      "https://aife-liart.vercel.app/auth/login",
     credentials: true,
   }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get("/", (req, res) => {
+  res.send("Movie Room API");
+});
 
 // Routes
 app.use("/api/auth", authRoutes);
