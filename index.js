@@ -45,6 +45,13 @@ app.get("/", (req, res) => {
   res.send("Movie Room API");
 });
 
+app.get("/roles", async (req, res) => {
+  const roles = await prisma.roles.findMany();
+  res.json({
+    roles,
+  });
+});
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
