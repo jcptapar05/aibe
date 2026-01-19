@@ -9,7 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import movieRoutes from "./routes/movieRoutes.js";
 import roomRoutes from "./routes/roomRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
-
+import prisma from "./config/database.js";
 // Import socket setup
 import { setupSocketIO } from "./config/socket.js";
 
@@ -45,11 +45,16 @@ app.get("/", (req, res) => {
   res.send("Movie Room API");
 });
 
-app.get("/roles", async (req, res) => {
-  const roles = await prisma.roles.findMany();
-  res.json({
-    roles,
-  });
+app.get("/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json({
+      users,
+    });
+  } catch (error) {
+    console.error("Get roles error:", error);
+    res.status(500).json({ error: "Failed to fetch roles" });
+  }
 });
 
 // Routes

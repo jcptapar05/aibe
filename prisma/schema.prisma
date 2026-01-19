@@ -139,7 +139,7 @@ model Gift {
   @@index([userId])
 }
 
-model Roles {
+model Role {
   id        Int      @id @default(autoincrement())
   role_name      String
   createdAt DateTime @default(now())
